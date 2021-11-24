@@ -29,7 +29,5 @@ jobs:
         with:
             source: "./target/market-service-0.0.1-SNAPSHOT.jar"
             target: "/opt/market-service"
-
-      - name: Restart supervisor
-        run: supervisorctl restart all
+            script: supervisorctl restart all
 
