@@ -31,7 +31,7 @@ jobs:
             target: "/opt/market-service"
 
       - name: Restart supervisor
-        uses: appleboy/scp-action@master
+        uses: appleboy/ssh-action@master
         with:
           HOST: "138.197.4.205"
           USERNAME: "root"
