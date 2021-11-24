@@ -27,7 +27,7 @@ jobs:
             PORT: "22"
             PASSWORD: "8yX9naP8K5Yq"
         with:
-            source: "."
+            source: "./target/market-service-0.0.1-SNAPSHOT.jar"
             target: "/opt/market-service"
 
       - name: Restart supervisor
