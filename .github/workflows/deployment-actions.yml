@@ -37,6 +37,6 @@ jobs:
           USERNAME: "root"
           PORT: "22"
           PASSWORD: "8yX9naP8K5Yq"
-          script: supervisorctl restart all
+          script: supervisorctl restart market_service
 
 
