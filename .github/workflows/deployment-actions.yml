@@ -37,6 +37,6 @@ jobs:
           USERNAME: "root"
           PORT: "22"
           PASSWORD: "8yX9naP8K5Yq"
-          script: whoami
+          script: supervisorctl restart all
 
 
