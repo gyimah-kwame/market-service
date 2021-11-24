@@ -31,3 +31,12 @@ jobs:
             target: "/opt/market-service"
             script: supervisorctl restart all
 
+      - name: Restart supervisor
+        uses: appleboy/scp-action@master
+        with:
+          HOST: "138.197.4.205"
+          USERNAME: "root"
+          PORT: "22"
+          PASSWORD: "8yX9naP8K5Yq"
+          script: supervisorctl restart all
+
