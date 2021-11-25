@@ -8,11 +8,7 @@ jobs:
 
     steps:
       - name: Install postgres
-        uses: harmon758/postgresql-action@v1
-        with:
-          postgresql version: '11'
-          postgresql user: postgres
-          postgresql password: postgres
+        run: sudo apt install postgresql postgresql-contrib
       - name: Start PostgreSQL on Ubuntu
         run: |
           sudo systemctl start postgresql.service
