@@ -1,9 +1,11 @@
 package io.turntabl.marketservice.services;
 
 import io.turntabl.marketservice.dtos.ExchangeDto;
+import io.turntabl.marketservice.exceptions.InvalidExchangeException;
 import io.turntabl.marketservice.models.Exchange;
 import io.turntabl.marketservice.repositories.ExchangeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -15,8 +17,14 @@ import java.util.stream.Collectors;
 @Transactional
 public class ExchangeService implements ServiceContract<ExchangeDto, Exchange> {
 
+    @Value("${environments.test.url}")
+    private String serverUrl;
+
     @Autowired
     private ExchangeRepository exchangeRepository;
+
+    @Autowired
+    private RestService restService;
 
 
     @Override
@@ -72,6 +80,28 @@ public class ExchangeService implements ServiceContract<ExchangeDto, Exchange> {
         exchangeDto.setBaseUrl(model.getBaseUrl());
 
         return exchangeDto;
+    }
+
+    public ExchangeDto subscribeToExchange(long exchangeId) {
+        Optional<Exchange> data = exchangeRepository.findById(exchangeId);
+
+        if (data.isEmpty()) {
+
+            throw new InvalidExchangeException(exchangeId);
+        }
+
+        Exchange exchange = data.get();
+
+        String callback = exchange.getName().equalsIgnoreCase("exchange 1") ? serverUrl+"/api/exchanges/callback_one": serverUrl+"/api/exchanges/callback_two";
+
+        restService.subscribeExchange(exchange.getBaseUrl(), callback);
+
+        exchange.setActive(true);
+
+        return toDto(exchangeRepository.save(exchange));
+
+
+
     }
 
 
