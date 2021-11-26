@@ -24,7 +24,7 @@ public class ExchangeService implements ServiceContract<ExchangeDto, Exchange> {
     private ExchangeRepository exchangeRepository;
 
     @Autowired
-    private RestService restService;
+    private IRestService iRestService;
 
 
     @Override
@@ -83,6 +83,14 @@ public class ExchangeService implements ServiceContract<ExchangeDto, Exchange> {
     }
 
     public ExchangeDto subscribeToExchange(long exchangeId) {
+        return toggleSubscription(exchangeId, true);
+    }
+
+    public ExchangeDto unsubscribeToExchange(long exchangeId) {
+        return toggleSubscription(exchangeId, false);
+    }
+
+    public ExchangeDto toggleSubscription(Long exchangeId, boolean status) {
         Optional<Exchange> data = exchangeRepository.findById(exchangeId);
 
         if (data.isEmpty()) {
@@ -94,14 +102,11 @@ public class ExchangeService implements ServiceContract<ExchangeDto, Exchange> {
 
         String callback = exchange.getName().equalsIgnoreCase("exchange 1") ? serverUrl+"/api/exchanges/callback_one": serverUrl+"/api/exchanges/callback_two";
 
-        restService.subscribeExchange(exchange.getBaseUrl(), callback);
+        iRestService.toggleSubscription(exchange.getBaseUrl(), callback, status ? "POST":"DELETE");
 
-        exchange.setActive(true);
+        exchange.setActive(status);
 
         return toDto(exchangeRepository.save(exchange));
-
-
-
     }
 
 

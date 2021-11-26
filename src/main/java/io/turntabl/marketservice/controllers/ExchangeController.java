@@ -29,8 +29,13 @@ public class ExchangeController {
 
     @PostMapping("/subscribe")
     public ExchangeDto subscribeToExchange(@Valid @RequestBody SubscriptionRequest request) {
-
         return exchangeService.subscribeToExchange(request.getExchangeId());
+    }
+
+    @DeleteMapping("/unsubscribe")
+    public ExchangeDto unsubscribeToExchange(@Valid @RequestBody SubscriptionRequest request) {
+
+        return exchangeService.unsubscribeToExchange(request.getExchangeId());
     }
 
     @PostMapping("/callback_one")
