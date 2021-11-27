@@ -13,13 +13,15 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@SpringBootTest
 @RunWith(MockitoJUnitRunner.class)
-public class ExchangeTest {
+public class ExchangeTests {
 
     @Mock
     private ExchangeRepository exchangeRepository;
