@@ -54,8 +54,6 @@ public class ExchangeTests {
 
         exchangeService.subscribeToExchange(exchangeOne.getId());
 
-        System.out.println(exchangeRepository.save(exchangeOne));
-
         Assertions.assertTrue(exchangeRepository.findById(exchangeOne.getId()).get().isActive());
 
         exchangeService.subscribeToExchange(exchangeTwo.getId());
