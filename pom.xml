@@ -12,7 +12,7 @@
 	<artifactId>market-service</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>market-service</name>
-	<description>ordering service</description>
+	<description>market service</description>
 	<properties>
 		<java.version>11</java.version>
 		<spring-cloud.version>2021.0.0-RC1</spring-cloud.version>
@@ -64,6 +64,11 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>

@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
-@Primary
+
 @Service
 public class WebClientService implements IRestService{
 

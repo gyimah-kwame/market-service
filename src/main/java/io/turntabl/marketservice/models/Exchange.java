@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Table(name="exchanges")
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class Exchange {
 
     @Id
