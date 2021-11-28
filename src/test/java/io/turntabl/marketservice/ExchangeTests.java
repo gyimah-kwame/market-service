@@ -1,11 +1,9 @@
 package io.turntabl.marketservice;
 
-import io.turntabl.marketservice.dtos.ExchangeDto;
 import io.turntabl.marketservice.models.Exchange;
 import io.turntabl.marketservice.repositories.ExchangeRepository;
 import io.turntabl.marketservice.services.ExchangeService;
-import io.turntabl.marketservice.services.IRestService;
-import io.turntabl.marketservice.services.ServiceContract;
+import io.turntabl.marketservice.rest.IRestService;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;

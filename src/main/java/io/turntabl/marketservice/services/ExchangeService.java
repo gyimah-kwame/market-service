@@ -4,6 +4,7 @@ import io.turntabl.marketservice.dtos.ExchangeDto;
 import io.turntabl.marketservice.exceptions.InvalidExchangeException;
 import io.turntabl.marketservice.models.Exchange;
 import io.turntabl.marketservice.repositories.ExchangeRepository;
+import io.turntabl.marketservice.rest.IRestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package io.turntabl.marketservice.services;
+package io.turntabl.marketservice.rest;
 
 import org.springframework.stereotype.Component;
 

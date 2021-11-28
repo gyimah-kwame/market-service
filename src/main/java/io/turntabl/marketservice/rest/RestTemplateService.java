@@ -1,4 +1,4 @@
-package io.turntabl.marketservice.services;
+package io.turntabl.marketservice.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +10,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-@Primary
 @Service
 @Slf4j
 public class RestTemplateService implements IRestService{
@@ -25,14 +24,15 @@ public class RestTemplateService implements IRestService{
 
         HttpEntity<String> entity = new HttpEntity<>(callback, headers);
 
-        log.info(baseUrl+"/md/subscription");
-        log.info(callback);
-
         if (method.equalsIgnoreCase("post")) {
-             log.info("subscribe "+restTemplate.postForObject(baseUrl+"/md/subscription", entity, Boolean.class));
-        }else {
-            log.info("unsubscribe "+restTemplate.exchange(baseUrl+"/md/subscription", HttpMethod.DELETE, entity, Boolean.class));
 
+            Boolean status = restTemplate.postForObject(baseUrl+"/md/subscription", entity, Boolean.class);
+            log.info("subscribe "+status);
+
+        }else {
+
+            Boolean status = restTemplate.exchange(baseUrl+"/md/subscription", HttpMethod.DELETE, entity, Boolean.class).getBody();
+            log.info("unsubscribe "+status);
         }
 
     }
