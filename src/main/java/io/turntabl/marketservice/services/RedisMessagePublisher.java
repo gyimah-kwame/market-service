@@ -1,5 +1,6 @@
 package io.turntabl.marketservice.services;
 
+import com.google.gson.Gson;
 import io.turntabl.marketservice.dtos.MarketDataDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -15,12 +16,15 @@ public class RedisMessagePublisher {
     @Autowired
     private ChannelTopic topic;
 
+    @Autowired
+    private Gson gson;
+
     /**
      * publish market data to redis
      *
      * @param marketDataDto market data from exchange
      */
     public void publish(MarketDataDto marketDataDto) {
-        template.convertAndSend(topic.getTopic(),marketDataDto);
+        template.convertAndSend(topic.getTopic(),gson.toJson(marketDataDto));
     }
 }
