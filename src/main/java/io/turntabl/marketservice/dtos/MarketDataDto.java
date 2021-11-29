@@ -1,6 +1,7 @@
 package io.turntabl.marketservice.dtos;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import io.turntabl.marketservice.models.MarketData;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,26 +9,35 @@ import lombok.NoArgsConstructor;
 @Data
 public class MarketDataDto {
 
-    @JsonProperty("TICKER")
     private String ticker;
 
-    @JsonProperty("SELL_LIMIT")
     private double sellLimit;
 
-    @JsonProperty("LAST_TRADED_PRICE")
     private double lastTradedPrice;
 
-    @JsonProperty("MAX_PRICE_SHIFT")
     private double maxPriceShift;
 
-    @JsonProperty("ASK_PRICE")
     private double askPrice;
 
-    @JsonProperty("BID_PRICE")
     private double bidPrice;
 
-    @JsonProperty("BUY_LIMIT")
     private double buyLimit;
+
+    private String exchangeId;
+
+    public static MarketDataDto fromModel(MarketData marketData) {
+        MarketDataDto marketDataDto = new MarketDataDto();
+
+        marketDataDto.setAskPrice(marketData.getAskPrice());
+        marketDataDto.setBidPrice(marketData.getBidPrice());
+        marketDataDto.setBuyLimit(marketDataDto.getBuyLimit());
+        marketDataDto.setLastTradedPrice(marketDataDto.getLastTradedPrice());
+        marketDataDto.setTicker(marketData.getTicker());
+        marketDataDto.setMaxPriceShift(marketDataDto.getMaxPriceShift());
+        marketDataDto.setSellLimit(marketDataDto.getSellLimit());
+
+        return marketDataDto;
+    }
 
 
 }

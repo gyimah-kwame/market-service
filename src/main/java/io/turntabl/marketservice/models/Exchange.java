@@ -1,31 +1,40 @@
 package io.turntabl.marketservice.models;
 
-import com.sun.istack.NotNull;
+
+import io.turntabl.marketservice.dtos.ExchangeDto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-import javax.persistence.*;
 
-@Entity
-@Table(name="exchanges")
+@Document("exchanges")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Exchange {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private String id;
 
-    private Long id;
-
-    @Column(nullable = false)
     private String name;
 
-    @Column(name = "base_url", nullable = false)
+    @Field(name = "base_url")
     private String baseUrl;
 
-
-    @Column(name = "is_active")
+    @Field(name = "is_active")
     private boolean isActive = true;
+
+    public static Exchange fromDto(ExchangeDto dto) {
+        Exchange exchange = new Exchange();
+
+        exchange.setActive(dto.isActive());
+        exchange.setBaseUrl(dto.getBaseUrl());
+        exchange.setName(dto.getName());
+        exchange.setId(dto.getId());
+
+        return exchange;
+    }
 }

@@ -30,7 +30,6 @@ public class RestTemplateService implements IRestService{
             log.info("subscribe "+status);
 
         }else {
-
             Boolean status = restTemplate.exchange(baseUrl+"/md/subscription", HttpMethod.DELETE, entity, Boolean.class).getBody();
             log.info("unsubscribe "+status);
         }

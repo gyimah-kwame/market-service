@@ -1,13 +1,14 @@
 package io.turntabl.marketservice.controllers;
 
+import io.turntabl.marketservice.constants.AppConstants;
 import io.turntabl.marketservice.dtos.ExchangeDto;
 import io.turntabl.marketservice.dtos.MarketDataDto;
+import io.turntabl.marketservice.requests.MarketDataRequest;
 import io.turntabl.marketservice.requests.SubscriptionRequest;
 import io.turntabl.marketservice.services.ExchangeService;
-import io.turntabl.marketservice.services.RedisMessagePublisher;
+import io.turntabl.marketservice.services.MessagePublisher;
+import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -16,15 +17,14 @@ import java.util.Map;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api")
+@RequestMapping("/api/v1")
 @Slf4j
+@AllArgsConstructor
 public class ExchangeController {
 
-    @Autowired
-    private ExchangeService exchangeService;
+    private final ExchangeService exchangeService;
 
-    @Autowired
-    private RedisMessagePublisher publisher;
+    private final MessagePublisher publisher;
 
     @GetMapping("/exchanges")
     public List<ExchangeDto> getExchanges(@RequestParam Map<String, String> filters) {
@@ -42,17 +42,17 @@ public class ExchangeController {
     }
 
     @PostMapping("/exchanges/callback_one")
-    public void getExchangeOneMarketData(@RequestBody MarketDataDto dto) {
-        log.info("market data from exchange one {}", dto);
-        publisher.publish(dto);
+    public void getExchangeOneMarketData(@RequestBody MarketDataRequest request) {
+        log.info("market data from exchange one {}", request);
+        publisher.publish(request, AppConstants.EXCHANGE_ONE);
 
     }
 
 
     @PostMapping("/exchanges/callback_two")
-    public void getExchangeTwoMarketData(@RequestBody MarketDataDto dto) {
-        log.info("market data from exchange two {}", dto);
-        publisher.publish(dto);
+    public void getExchangeTwoMarketData(@RequestBody MarketDataRequest marketDataRequest) {
+        log.info("market data from exchange two {}", marketDataRequest);
+        publisher.publish(marketDataRequest, AppConstants.EXCHANGE_TWO);
     }
 
 }
