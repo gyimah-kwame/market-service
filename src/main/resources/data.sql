@@ -1,0 +1,2 @@
+--INSERT INTO exchanges(name, base_url) VALUES ('Exchange 1', 'https://exchange.matraining.com/');
+--INSERT INTO exchanges(name, base_url) VALUES ('Exchange 2', 'https://exchange2.matraining.com/');
