@@ -22,7 +22,6 @@ public class WebClientService implements IRestService{
     @Override
     public void toggleSubscription(String baseUrl, String callback, String method) {
         if (method.equalsIgnoreCase("post")) {
-
             webClient.post()
                     .uri(baseUrl+"/md/subscription")
                     .body(Mono.just(callback), String.class)

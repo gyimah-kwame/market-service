@@ -22,13 +22,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class RedisMessagePublisherImpl implements MessagePublisher {
 
     private final StringRedisTemplate template;
-
     private final ChannelTopic topic;
-
     private final Gson gson;
-
     private final MarketDataRepository marketDataRepository;
-
     private final ExchangeRepository exchangeRepository;
 
 
@@ -50,7 +46,6 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
 
         //save data to mongo
         marketDataRepository.insert(marketData);
-
         template.convertAndSend(topic.getTopic(),gson.toJson(marketDataRequest));
     }
 }

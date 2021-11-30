@@ -59,12 +59,7 @@ public class ExchangeServiceImpl implements ExchangeService {
     public ExchangeDto toggleSubscription(String exchangeId, boolean status) {
         Optional<Exchange> data = exchangeRepository.findById(exchangeId);
 
-        if (data.isEmpty()) {
-
-            throw new InvalidExchangeException(exchangeId);
-        }
-
-        Exchange exchange = data.get();
+        Exchange exchange = data.orElseThrow(() -> new InvalidExchangeException(exchangeId));
 
         String callback = exchange.getName().equalsIgnoreCase("exchange 1") ? serverUrl+"/api/exchanges/callback_one": serverUrl+"/api/exchanges/callback_two";
 
