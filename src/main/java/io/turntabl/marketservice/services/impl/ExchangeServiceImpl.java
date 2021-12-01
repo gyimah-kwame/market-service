@@ -8,6 +8,7 @@ import io.turntabl.marketservice.rest.IRestService;
 import io.turntabl.marketservice.services.ExchangeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 
     @Autowired
     private IRestService iRestService;
+
 
 
     @Override

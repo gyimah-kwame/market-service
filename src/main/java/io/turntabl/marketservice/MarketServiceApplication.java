@@ -43,9 +43,11 @@ public class MarketServiceApplication  implements CommandLineRunner {
 
 		ExchangeDto exchangeDto = new ExchangeDto();
 		exchangeDto.setActive(true);
+		exchangeDto.setId("61a7d0ce47593570ea5307b8");
 		exchangeDto.setName(AppConstants.EXCHANGE_ONE);
 		exchangeDto.setBaseUrl("https://exchange.matraining.com");
 
+		exchangeDto.setId("61a7d0ce47593570ea5307b9");
 		ExchangeDto exchangeDto2 = new ExchangeDto();
 		exchangeDto2.setActive(true);
 		exchangeDto2.setName(AppConstants.EXCHANGE_TWO);

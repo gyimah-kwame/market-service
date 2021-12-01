@@ -8,7 +8,9 @@ import io.turntabl.marketservice.repositories.MarketDataRepository;
 import io.turntabl.marketservice.requests.MarketDataRequest;
 import io.turntabl.marketservice.services.MessagePublisher;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
@@ -26,26 +28,32 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
     private final Gson gson;
     private final MarketDataRepository marketDataRepository;
     private final ExchangeRepository exchangeRepository;
+    private final HashOperations<String, String, String> hashOperations;
 
 
     @Override
     public void publish(MarketDataRequest marketDataRequest, String exchangeName) {
 
+        Exchange exchange = exchangeRepository.findByName(exchangeName);
+
         MarketData marketData = new MarketData();
         marketData.setSellLimit(marketDataRequest.getSellLimit());
-        marketData.setTicker(marketData.getTicker());
-        marketData.setMaxPriceShift(marketData.getMaxPriceShift());
-        marketData.setBuyLimit(marketData.getBuyLimit());
-        marketData.setBidPrice(marketData.getBidPrice());
-        marketData.setAskPrice(marketData.getAskPrice());
-        marketData.setLastTradedPrice(marketData.getLastTradedPrice());
-
-        Exchange exchange = exchangeRepository.findByName(exchangeName);
+        marketData.setTicker(marketDataRequest.getTicker());
+        marketData.setMaxPriceShift(marketDataRequest.getMaxPriceShift());
+        marketData.setBuyLimit(marketDataRequest.getBuyLimit());
+        marketData.setBidPrice(marketDataRequest.getBidPrice());
+        marketData.setAskPrice(marketDataRequest.getAskPrice());
+        marketData.setLastTradedPrice(marketDataRequest.getLastTradedPrice());
 
         marketData.setExchangeId(exchange.getId());
 
         //save data to mongo
         marketDataRepository.insert(marketData);
-        template.convertAndSend(topic.getTopic(),gson.toJson(marketDataRequest));
+
+        //save to redis
+        String key = marketData.getTicker()+"_"+exchange.getId();
+
+        hashOperations.put(key, key, gson.toJson(marketData));
+
     }
 }

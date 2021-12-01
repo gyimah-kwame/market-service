@@ -38,7 +38,7 @@ public class MarketData {
         marketData.setMaxPriceShift(dto.getMaxPriceShift());
         marketData.setTicker(dto.getTicker());
         marketData.setSellLimit(dto.getSellLimit());
-        marketData.setExchangeId("");
+        marketData.setExchangeId(dto.getExchangeId());
 
         return  marketData;
     }
