@@ -82,7 +82,7 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
             Optional<Product> product = productRepository.findByTicker(marketData.getTicker());
 
             if (product.isEmpty()) {
-                productRepository.insert(product.get());
+                productRepository.save(product.get());
             }
 
 
