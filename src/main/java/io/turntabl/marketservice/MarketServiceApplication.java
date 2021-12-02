@@ -1,18 +1,18 @@
 package io.turntabl.marketservice;
 
-import io.turntabl.marketservice.constants.AppConstants;
+import com.google.gson.Gson;
+import io.turntabl.marketservice.constants.ExchangeName;
 import io.turntabl.marketservice.dtos.ExchangeDto;
-import io.turntabl.marketservice.models.Exchange;
 import io.turntabl.marketservice.repositories.ExchangeRepository;
-import io.turntabl.marketservice.services.ExchangeService;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
+import org.springframework.data.redis.core.HashOperations;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,11 +22,17 @@ import java.util.stream.Collectors;
 @EnableDiscoveryClient
 @SpringBootApplication
 @EnableMongoRepositories
-
+@EnableFeignClients
 public class MarketServiceApplication  implements CommandLineRunner {
 
 	@Autowired
 	private ExchangeRepository exchangeRepository;
+
+	@Autowired
+	private HashOperations<String, String, String> hashOperations;
+
+	@Autowired
+	private Gson gson;
 
 
 	public static void main(String[] args){
@@ -43,16 +49,22 @@ public class MarketServiceApplication  implements CommandLineRunner {
 
 		ExchangeDto exchangeDto = new ExchangeDto();
 		exchangeDto.setActive(true);
-		exchangeDto.setName(AppConstants.EXCHANGE_ONE);
+		exchangeDto.setId("61a7d0ce47593570ea5307b8");
+		exchangeDto.setName(ExchangeName.EXCHANGE_ONE.toString());
 		exchangeDto.setBaseUrl("https://exchange.matraining.com");
 
+
 		ExchangeDto exchangeDto2 = new ExchangeDto();
+		exchangeDto2.setId("61a7d0ce47593570ea5307b9");
 		exchangeDto2.setActive(true);
-		exchangeDto2.setName(AppConstants.EXCHANGE_TWO);
+		exchangeDto2.setName(ExchangeName.EXCHANGE_TWO.toString());
 		exchangeDto2.setBaseUrl("https://exchange2.matraining.com");
 
 		List<ExchangeDto> exchanges = List.of(exchangeDto, exchangeDto2);
 
-		exchangeRepository.saveAll(exchanges.stream().map(Exchange::fromDto).collect(Collectors.toList()));
+		exchangeRepository.saveAll(exchanges.stream().map(io.turntabl.marketservice.models.Exchange::fromDto).collect(Collectors.toList()));
+
+		hashOperations.put(ExchangeName.EXCHANGE_ONE.toString(), ExchangeName.EXCHANGE_ONE.toString(), gson.toJson(exchangeDto));
+		hashOperations.put(ExchangeName.EXCHANGE_TWO.toString(), ExchangeName.EXCHANGE_TWO.toString(), gson.toJson(exchangeDto2));
 	}
 }

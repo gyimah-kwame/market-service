@@ -1,5 +1,6 @@
 package io.turntabl.marketservice.services.impl;
 
+import io.turntabl.marketservice.constants.ExchangeName;
 import io.turntabl.marketservice.dtos.ExchangeDto;
 import io.turntabl.marketservice.exceptions.InvalidExchangeException;
 import io.turntabl.marketservice.models.Exchange;
@@ -8,6 +9,7 @@ import io.turntabl.marketservice.rest.IRestService;
 import io.turntabl.marketservice.services.ExchangeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +30,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 
     @Autowired
     private IRestService iRestService;
+
 
 
     @Override
@@ -61,7 +64,7 @@ public class ExchangeServiceImpl implements ExchangeService {
 
         Exchange exchange = data.orElseThrow(() -> new InvalidExchangeException(exchangeId));
 
-        String callback = exchange.getName().equalsIgnoreCase("exchange 1") ? serverUrl+"/api/exchanges/callback_one": serverUrl+"/api/exchanges/callback_two";
+        String callback = exchange.getName().equalsIgnoreCase(ExchangeName.EXCHANGE_ONE.toString()) ? serverUrl+"/api/v1/exchanges/callback_one": serverUrl+"/api/v1/exchanges/callback_two";
 
         iRestService.toggleSubscription(exchange.getBaseUrl(), callback, status ? "POST":"DELETE");
 

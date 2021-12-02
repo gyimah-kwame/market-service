@@ -3,9 +3,11 @@ package io.turntabl.marketservice.requests;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @NoArgsConstructor
 @Data
+@ToString
 public class MarketDataRequest {
 
     @JsonProperty("TICKER")
@@ -29,7 +31,8 @@ public class MarketDataRequest {
     @JsonProperty("BUY_LIMIT")
     private double buyLimit;
 
-    private String exchangeId;
+
+//    private String exchangeId;
 
 
 

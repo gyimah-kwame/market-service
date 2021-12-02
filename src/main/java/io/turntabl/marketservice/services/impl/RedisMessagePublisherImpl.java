@@ -10,13 +10,22 @@ import io.turntabl.marketservice.repositories.ProductRepository;
 import io.turntabl.marketservice.requests.MarketDataRequest;
 import io.turntabl.marketservice.services.MessagePublisher;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
+import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+<<<<<<< HEAD
 import java.util.Optional;
+=======
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalDouble;
+import java.util.stream.Collectors;
+>>>>>>> c397246000fcd68c2f93554f9427c9ce01c1ae72
 
 
 @Primary
@@ -30,27 +39,23 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
     private final Gson gson;
     private final MarketDataRepository marketDataRepository;
     private final ExchangeRepository exchangeRepository;
+    private final HashOperations<String, String, String> hashOperations;
 
     private final ProductRepository productRepository;
 
 
     @Override
-    public void publish(MarketDataRequest marketDataRequest, String exchangeName) {
-
-        MarketData marketData = new MarketData();
-        marketData.setSellLimit(marketDataRequest.getSellLimit());
-        marketData.setTicker(marketData.getTicker());
-        marketData.setMaxPriceShift(marketData.getMaxPriceShift());
-        marketData.setBuyLimit(marketData.getBuyLimit());
-        marketData.setBidPrice(marketData.getBidPrice());
-        marketData.setAskPrice(marketData.getAskPrice());
-        marketData.setLastTradedPrice(marketData.getLastTradedPrice());
+    public void publish(List<MarketDataRequest> marketDataRequest, String exchangeName) {
 
         Exchange exchange = exchangeRepository.findByName(exchangeName);
 
-        marketData.setExchangeId(exchange.getId());
+        List<MarketData> marketDataList = marketDataRequest.stream()
+                .map(x -> MarketData.fromRequest(x,exchange.getId()))
+                .collect(Collectors.toList());
+
 
         //save data to mongo
+<<<<<<< HEAD
         marketDataRepository.insert(marketData);
 
         Product product = productRepository.findByTicker(marketData.getTicker()).orElse(new Product(marketData.getTicker()));
@@ -58,5 +63,39 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
         productRepository.insert(product);
 
         template.convertAndSend(topic.getTopic(),gson.toJson(marketDataRequest));
+=======
+        marketDataRepository.insert(marketDataList);
+
+        marketDataList.forEach(marketData -> {
+
+            /*
+             * find the average ask price and bid price and save it to redis
+             */
+
+            List<MarketData> data = marketDataRepository.findByTickerAndExchangeIdOrderByCreatedAtDesc(marketData.getTicker(), exchange.getId())
+                    .stream()
+                    .limit(10)
+                    .collect(Collectors.toList());
+
+            OptionalDouble buyLimitOptional = data.stream().map(MarketData::getBuyLimit).mapToDouble(Double::doubleValue).average();
+            OptionalDouble sellLimitOptional = data.stream().map(MarketData::getSellLimit).mapToDouble(Double::doubleValue).average();
+
+            double buyLimit = buyLimitOptional.orElse(0);
+
+            double sellLimit = sellLimitOptional.orElse(0);
+
+
+            String key = marketData.getTicker()+"_"+exchange.getId();
+
+            marketData.setSellLimit(sellLimit);
+
+            marketData.setBuyLimit(buyLimit);
+
+            hashOperations.put(key, key, gson.toJson(marketData));
+
+        });
+
+
+>>>>>>> c397246000fcd68c2f93554f9427c9ce01c1ae72
     }
 }
