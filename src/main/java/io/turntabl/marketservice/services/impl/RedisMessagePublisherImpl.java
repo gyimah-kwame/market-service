@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 import java.util.OptionalDouble;
+import java.util.stream.Collectors;
 
 
 @Primary
@@ -36,41 +37,47 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
 
 
     @Override
-    public void publish(MarketDataRequest marketDataRequest, String exchangeName) {
+    public void publish(List<MarketDataRequest> marketDataRequest, String exchangeName) {
 
         Exchange exchange = exchangeRepository.findByName(exchangeName);
 
-        MarketData marketData = new MarketData();
-        marketData.setSellLimit(marketDataRequest.getSellLimit());
-        marketData.setTicker(marketDataRequest.getTicker());
-        marketData.setMaxPriceShift(marketDataRequest.getMaxPriceShift());
-        marketData.setBuyLimit(marketDataRequest.getBuyLimit());
-        marketData.setBidPrice(marketDataRequest.getBidPrice());
-        marketData.setAskPrice(marketDataRequest.getAskPrice());
-        marketData.setLastTradedPrice(marketDataRequest.getLastTradedPrice());
+        List<MarketData> marketDataList = marketDataRequest.stream()
+                .map(x -> MarketData.fromRequest(x,exchange.getId()))
+                .collect(Collectors.toList());
 
-        marketData.setExchangeId(exchange.getId());
 
         //save data to mongo
-        marketDataRepository.insert(marketData);
+        marketDataRepository.insert(marketDataList);
 
-        List<MarketData> data = marketDataRepository.findByTickerAndExchangeId(marketData.getTicker(), exchange.getId());
+        marketDataList.forEach(marketData -> {
 
-        OptionalDouble buyLimitOptional = data.stream().map(MarketData::getBuyLimit).mapToDouble(Double::doubleValue).average();
-        OptionalDouble sellLimitOptional = data.stream().map(MarketData::getSellLimit).mapToDouble(Double::doubleValue).average();
+            /*
+             * find the average ask price and bid price and save it to redis
+             */
 
-        double buyLimit = buyLimitOptional.orElse(0);
-        
-        double sellLimit = sellLimitOptional.orElse(0);
+            List<MarketData> data = marketDataRepository.findByTickerAndExchangeIdOrderByCreatedAtDesc(marketData.getTicker(), exchange.getId())
+                    .stream()
+                    .limit(10)
+                    .collect(Collectors.toList());
 
-        //save to redis
-        String key = marketData.getTicker()+"_"+exchange.getId();
+            OptionalDouble buyLimitOptional = data.stream().map(MarketData::getBuyLimit).mapToDouble(Double::doubleValue).average();
+            OptionalDouble sellLimitOptional = data.stream().map(MarketData::getSellLimit).mapToDouble(Double::doubleValue).average();
 
-        marketData.setSellLimit(sellLimit);
+            double buyLimit = buyLimitOptional.orElse(0);
 
-        marketData.setBuyLimit(buyLimit);
+            double sellLimit = sellLimitOptional.orElse(0);
 
-        hashOperations.put(key, key, gson.toJson(marketData));
+
+            String key = marketData.getTicker()+"_"+exchange.getId();
+
+            marketData.setSellLimit(sellLimit);
+
+            marketData.setBuyLimit(buyLimit);
+
+            hashOperations.put(key, key, gson.toJson(marketData));
+
+        });
+
 
     }
 }

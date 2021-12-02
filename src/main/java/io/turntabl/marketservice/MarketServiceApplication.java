@@ -10,6 +10,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
+import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.redis.core.HashOperations;
 
@@ -21,7 +22,7 @@ import java.util.stream.Collectors;
 @EnableDiscoveryClient
 @SpringBootApplication
 @EnableMongoRepositories
-
+@EnableFeignClients
 public class MarketServiceApplication  implements CommandLineRunner {
 
 	@Autowired
@@ -62,7 +63,6 @@ public class MarketServiceApplication  implements CommandLineRunner {
 		List<ExchangeDto> exchanges = List.of(exchangeDto, exchangeDto2);
 
 		exchangeRepository.saveAll(exchanges.stream().map(io.turntabl.marketservice.models.Exchange::fromDto).collect(Collectors.toList()));
-
 
 		hashOperations.put(ExchangeName.EXCHANGE_ONE.toString(), ExchangeName.EXCHANGE_ONE.toString(), gson.toJson(exchangeDto));
 		hashOperations.put(ExchangeName.EXCHANGE_TWO.toString(), ExchangeName.EXCHANGE_TWO.toString(), gson.toJson(exchangeDto2));

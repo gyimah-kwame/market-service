@@ -11,4 +11,6 @@ public interface MarketDataRepository extends MongoRepository<MarketData, String
 
     List<MarketData> findByTickerAndExchangeId(String ticker, String exchangeId);
 
+    List<MarketData> findByTickerAndExchangeIdOrderByCreatedAtDesc(String ticker, String exchangeId);
+
 }

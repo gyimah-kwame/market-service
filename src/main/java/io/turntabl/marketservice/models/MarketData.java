@@ -1,10 +1,14 @@
 package io.turntabl.marketservice.models;
 
 import io.turntabl.marketservice.dtos.MarketDataDto;
+import io.turntabl.marketservice.requests.MarketDataRequest;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.time.LocalDateTime;
 
 @Document("market_data")
 @Data
@@ -18,6 +22,7 @@ public class MarketData {
 
     private double lastTradedPrice;
 
+
     private double maxPriceShift;
 
     private double askPrice;
@@ -27,6 +32,8 @@ public class MarketData {
     private double buyLimit;
 
     private String exchangeId;
+
+    private LocalDateTime createdAt = LocalDateTime.now();
 
     public static MarketData fromDto(MarketDataDto dto) {
         MarketData marketData = new MarketData();
@@ -41,5 +48,18 @@ public class MarketData {
         marketData.setExchangeId(dto.getExchangeId());
 
         return  marketData;
+    }
+
+    public static MarketData fromRequest(MarketDataRequest marketDataRequest, String exchangeId) {
+        MarketData marketData = new MarketData();
+        marketData.setBuyLimit(marketDataRequest.getBuyLimit());
+        marketData.setSellLimit(marketDataRequest.getSellLimit());
+        marketData.setTicker(marketDataRequest.getTicker());
+        marketData.setExchangeId(exchangeId);
+        marketData.setBidPrice(marketDataRequest.getBidPrice());
+        marketData.setAskPrice(marketDataRequest.getAskPrice());
+        marketData.setLastTradedPrice(marketDataRequest.getLastTradedPrice());
+
+        return marketData;
     }
 }

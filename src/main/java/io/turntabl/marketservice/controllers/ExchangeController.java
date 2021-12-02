@@ -41,7 +41,7 @@ public class ExchangeController {
     }
 
     @PostMapping("/exchanges/callback_one")
-    public void getExchangeOneMarketData(@RequestBody MarketDataRequest request) {
+    public void getExchangeOneMarketData(@RequestBody List<MarketDataRequest> request) {
         log.info("market data from exchange one {}", request);
         publisher.publish(request, ExchangeName.EXCHANGE_ONE.toString());
 
@@ -49,7 +49,7 @@ public class ExchangeController {
 
 
     @PostMapping("/exchanges/callback_two")
-    public void getExchangeTwoMarketData(@RequestBody MarketDataRequest marketDataRequest) {
+    public void getExchangeTwoMarketData(@RequestBody  List<MarketDataRequest> marketDataRequest) {
         log.info("market data from exchange two {}", marketDataRequest);
         publisher.publish(marketDataRequest, ExchangeName.EXCHANGE_TWO.toString());
     }
