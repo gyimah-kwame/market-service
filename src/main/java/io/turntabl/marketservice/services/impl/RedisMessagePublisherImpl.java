@@ -18,14 +18,9 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-<<<<<<< HEAD
-import java.util.Optional;
-=======
 import java.util.List;
-import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
->>>>>>> c397246000fcd68c2f93554f9427c9ce01c1ae72
 
 
 @Primary
@@ -55,15 +50,6 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
 
 
         //save data to mongo
-<<<<<<< HEAD
-        marketDataRepository.insert(marketData);
-
-        Product product = productRepository.findByTicker(marketData.getTicker()).orElse(new Product(marketData.getTicker()));
-
-        productRepository.insert(product);
-
-        template.convertAndSend(topic.getTopic(),gson.toJson(marketDataRequest));
-=======
         marketDataRepository.insert(marketDataList);
 
         marketDataList.forEach(marketData -> {
@@ -95,7 +81,5 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
 
         });
 
-
->>>>>>> c397246000fcd68c2f93554f9427c9ce01c1ae72
     }
 }
