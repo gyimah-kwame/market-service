@@ -16,6 +16,10 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.OptionalDouble;
+
 
 @Primary
 @Service
@@ -50,8 +54,21 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
         //save data to mongo
         marketDataRepository.insert(marketData);
 
+        List<MarketData> data = marketDataRepository.findByTickerAndExchangeId(marketData.getTicker(), exchange.getId());
+
+        OptionalDouble buyLimitOptional = data.stream().map(MarketData::getBuyLimit).mapToDouble(Double::doubleValue).average();
+        OptionalDouble sellLimitOptional = data.stream().map(MarketData::getSellLimit).mapToDouble(Double::doubleValue).average();
+
+        double buyLimit = buyLimitOptional.orElse(0);
+        
+        double sellLimit = sellLimitOptional.orElse(0);
+
         //save to redis
         String key = marketData.getTicker()+"_"+exchange.getId();
+
+        marketData.setSellLimit(sellLimit);
+
+        marketData.setBuyLimit(buyLimit);
 
         hashOperations.put(key, key, gson.toJson(marketData));
 

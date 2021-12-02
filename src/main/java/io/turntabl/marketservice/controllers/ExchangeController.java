@@ -1,8 +1,7 @@
 package io.turntabl.marketservice.controllers;
 
-import io.turntabl.marketservice.constants.AppConstants;
+import io.turntabl.marketservice.constants.ExchangeName;
 import io.turntabl.marketservice.dtos.ExchangeDto;
-import io.turntabl.marketservice.dtos.MarketDataDto;
 import io.turntabl.marketservice.requests.MarketDataRequest;
 import io.turntabl.marketservice.requests.SubscriptionRequest;
 import io.turntabl.marketservice.services.ExchangeService;
@@ -44,7 +43,7 @@ public class ExchangeController {
     @PostMapping("/exchanges/callback_one")
     public void getExchangeOneMarketData(@RequestBody MarketDataRequest request) {
         log.info("market data from exchange one {}", request);
-        publisher.publish(request, AppConstants.EXCHANGE_ONE);
+        publisher.publish(request, ExchangeName.EXCHANGE_ONE.toString());
 
     }
 
@@ -52,7 +51,7 @@ public class ExchangeController {
     @PostMapping("/exchanges/callback_two")
     public void getExchangeTwoMarketData(@RequestBody MarketDataRequest marketDataRequest) {
         log.info("market data from exchange two {}", marketDataRequest);
-        publisher.publish(marketDataRequest, AppConstants.EXCHANGE_TWO);
+        publisher.publish(marketDataRequest, ExchangeName.EXCHANGE_TWO.toString());
     }
 
 }

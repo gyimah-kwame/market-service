@@ -1,5 +1,6 @@
 package io.turntabl.marketservice.dtos;
 
+import io.turntabl.marketservice.constants.ExchangeName;
 import io.turntabl.marketservice.models.Exchange;
 import lombok.AllArgsConstructor;
 import lombok.Data;
