@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
@@ -47,7 +48,6 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
         List<MarketData> marketDataList = marketDataRequest.stream()
                 .map(x -> MarketData.fromRequest(x,exchange.getId()))
                 .collect(Collectors.toList());
-
 
         //save data to mongo
         marketDataRepository.insert(marketDataList);
@@ -78,6 +78,13 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
             marketData.setBuyLimit(buyLimit);
 
             hashOperations.put(key, key, gson.toJson(marketData));
+
+            Optional<Product> product = productRepository.findByTicker(marketData.getTicker());
+
+            if (product.isEmpty()) {
+                productRepository.insert(product.get());
+            }
+
 
         });
 
