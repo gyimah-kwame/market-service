@@ -3,8 +3,10 @@ package io.turntabl.marketservice.services.impl;
 import com.google.gson.Gson;
 import io.turntabl.marketservice.models.Exchange;
 import io.turntabl.marketservice.models.MarketData;
+import io.turntabl.marketservice.models.Product;
 import io.turntabl.marketservice.repositories.ExchangeRepository;
 import io.turntabl.marketservice.repositories.MarketDataRepository;
+import io.turntabl.marketservice.repositories.ProductRepository;
 import io.turntabl.marketservice.requests.MarketDataRequest;
 import io.turntabl.marketservice.services.MessagePublisher;
 import lombok.AllArgsConstructor;
@@ -13,6 +15,8 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Optional;
 
 
 @Primary
@@ -26,6 +30,8 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
     private final Gson gson;
     private final MarketDataRepository marketDataRepository;
     private final ExchangeRepository exchangeRepository;
+
+    private final ProductRepository productRepository;
 
 
     @Override
@@ -46,6 +52,11 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
 
         //save data to mongo
         marketDataRepository.insert(marketData);
+
+        Product product = productRepository.findByTicker(marketData.getTicker()).orElse(new Product(marketData.getTicker()));
+
+        productRepository.insert(product);
+
         template.convertAndSend(topic.getTopic(),gson.toJson(marketDataRequest));
     }
 }
