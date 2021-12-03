@@ -12,7 +12,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @ControllerAdvice
-public class ControllerAdvisor extends ResponseEntityExceptionHandler {
+public class ControllerAdvisor {
 
     @ExceptionHandler(InvalidExchangeException.class)
     public ResponseEntity<Object> handleInvalidExchange(InvalidExchangeException e, WebRequest request) {
