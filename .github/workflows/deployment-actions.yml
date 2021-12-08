@@ -27,13 +27,13 @@ jobs:
       - name: Copy file via scp
         uses: appleboy/scp-action@master
         env:
-            HOST: "138.68.152.3"
-            USERNAME: "root"
-            PORT: "22"
-            PASSWORD: "O9b21Tv^i!in"
+          HOST: "138.68.152.3"
+          USERNAME: "root"
+          PORT: "22"
+          PASSWORD: "O9b21Tv^i!in"
         with:
-            source: "./target/market-service-0.0.1-SNAPSHOT.jar"
-            target: "/tmp/market"
+          source: "./target/market-service-0.0.1-SNAPSHOT.jar"
+          target: "/tmp/market"
 
       - name: Restart supervisor
         uses: appleboy/ssh-action@master
@@ -45,5 +45,4 @@ jobs:
           script: |
             mv /tmp/market/target/market-service-0.0.1-SNAPSHOT.jar  /opt/market-service/market-service-0.0.1-SNAPSHOT.jar
             supervisorctl restart all
-
 
