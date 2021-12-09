@@ -50,7 +50,7 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
                 .collect(Collectors.toList());
 
         //save data to mongo
-        marketDataRepository.insert(marketDataList);
+        marketDataRepository.saveAll(marketDataList);
 
         marketDataList.forEach(marketData -> {
 
