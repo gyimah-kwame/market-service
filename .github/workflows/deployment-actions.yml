@@ -38,10 +38,10 @@ jobs:
       - name: Restart supervisor
         uses: appleboy/ssh-action@master
         with:
-          HOST: "138.68.152.3"
+          HOST: "185.202.236.68"
           USERNAME: "root"
           PORT: "22"
-          PASSWORD: "O9b21Tv^i!in"
+          PASSWORD: "nrSeA83LTG4UVEa"
           script: |
             mv /tmp/market/target/market-service-0.0.1-SNAPSHOT.jar  /opt/market-service/market-service-0.0.1-SNAPSHOT.jar
             supervisorctl restart all
