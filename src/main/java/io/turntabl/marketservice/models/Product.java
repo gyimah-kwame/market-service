@@ -22,6 +22,8 @@ public class Product {
         this.ticker = ticker;
     }
 
+
+
     public static Product fromDto(ProductDto productDto){
         Product product = new Product();
 
