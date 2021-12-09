@@ -7,9 +7,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 @SpringBootTest
 class MarketServiceApplicationTests {
 
-	@Test
-	void contextLoads() {
-		Assertions.assertTrue(true);
-	}
+//	@Test
+//	void contextLoads() {
+//		Assertions.assertTrue(true);
+//	}
 
 }

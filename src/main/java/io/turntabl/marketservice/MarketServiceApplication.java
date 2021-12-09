@@ -3,7 +3,12 @@ package io.turntabl.marketservice;
 import com.google.gson.Gson;
 import io.turntabl.marketservice.constants.ExchangeName;
 import io.turntabl.marketservice.dtos.ExchangeDto;
+import io.turntabl.marketservice.feignclients.ExchangeOneOrderBook;
+import io.turntabl.marketservice.feignclients.ExchangeTwoOrderBook;
 import io.turntabl.marketservice.repositories.ExchangeRepository;
+import io.turntabl.marketservice.repositories.OrderBookRepository;
+import io.turntabl.marketservice.responses.OrderBook;
+import io.turntabl.marketservice.responses.OrderBookResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -13,7 +18,9 @@ import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import org.springframework.data.redis.core.HashOperations;
+import reactor.core.publisher.Flux;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,6 +40,15 @@ public class MarketServiceApplication  implements CommandLineRunner {
 
 	@Autowired
 	private Gson gson;
+
+	@Autowired
+	private ExchangeOneOrderBook exchangeOneOrderBook;
+
+	@Autowired
+	private ExchangeTwoOrderBook exchangeTwoOrderBook;
+
+	@Autowired
+	private OrderBookRepository orderBookRepository;
 
 
 	public static void main(String[] args){
@@ -66,5 +82,35 @@ public class MarketServiceApplication  implements CommandLineRunner {
 
 		hashOperations.put(ExchangeName.EXCHANGE_ONE.toString(), ExchangeName.EXCHANGE_ONE.toString(), gson.toJson(exchangeDto));
 		hashOperations.put(ExchangeName.EXCHANGE_TWO.toString(), ExchangeName.EXCHANGE_TWO.toString(), gson.toJson(exchangeDto2));
+
+		orderBookRepository.deleteAll();
+
+		Flux.fromIterable(exchangeOneOrderBook.getData())
+				.map(OrderBookResponse::getFullOrderBook)
+				.flatMap(Flux::fromIterable)
+				.filter(fullOrderBook -> fullOrderBook.getQuantity() - fullOrderBook.getCumulatitiveQuantity() > 0)
+				.map(fullOrderBook -> new OrderBook(
+								fullOrderBook.getProduct(),
+								fullOrderBook.getSide(),
+								fullOrderBook.getPrice(),
+								fullOrderBook.getQuantity() - fullOrderBook.getCumulatitiveQuantity(),
+								"https://exchange.matraining.com"
+						)
+				).subscribe(orderBook -> orderBookRepository.save(orderBook));
+
+		Flux.fromIterable(exchangeTwoOrderBook.getData())
+				.map(OrderBookResponse::getFullOrderBook)
+				.flatMap(Flux::fromIterable)
+				.filter(fullOrderBook -> fullOrderBook.getQuantity() - fullOrderBook.getCumulatitiveQuantity() > 0)
+				.map(fullOrderBook -> new OrderBook(
+								fullOrderBook.getProduct(),
+								fullOrderBook.getSide(),
+								fullOrderBook.getPrice(),
+								fullOrderBook.getQuantity() - fullOrderBook.getCumulatitiveQuantity(),
+								"https://exchange2.matraining.com"
+						)
+				).subscribe(orderBook -> orderBookRepository.save(orderBook));
+
+
 	}
 }
