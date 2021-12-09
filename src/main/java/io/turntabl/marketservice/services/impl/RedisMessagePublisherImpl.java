@@ -50,40 +50,17 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
                 .collect(Collectors.toList());
 
         //save data to mongo
-        marketDataRepository.insert(marketDataList);
+        marketDataRepository.saveAll(marketDataList);
 
         marketDataList.forEach(marketData -> {
 
-            /*
-             * find the average ask price and bid price and save it to redis
-             */
-
-            List<MarketData> data = marketDataRepository.findByTickerAndExchangeIdOrderByCreatedAtDesc(marketData.getTicker(), exchange.getId())
-                    .stream()
-                    .limit(10)
-                    .collect(Collectors.toList());
-
-            OptionalDouble buyLimitOptional = data.stream().map(MarketData::getBuyLimit).mapToDouble(Double::doubleValue).average();
-            OptionalDouble sellLimitOptional = data.stream().map(MarketData::getSellLimit).mapToDouble(Double::doubleValue).average();
-
-            double buyLimit = buyLimitOptional.orElse(0);
-
-            double sellLimit = sellLimitOptional.orElse(0);
-
-
             String key = marketData.getTicker()+"_"+exchange.getId();
-
-            marketData.setSellLimit(sellLimit);
-
-            marketData.setBuyLimit(buyLimit);
 
             hashOperations.put(key, key, gson.toJson(marketData));
 
-            Optional<Product> product = productRepository.findByTicker(marketData.getTicker());
+            Product product = productRepository.findByTicker(marketData.getTicker()).orElse(new Product(marketData.getTicker()));
 
-            if (product.isEmpty()) {
-                productRepository.save(product.get());
-            }
+            productRepository.save(product);
 
 
         });

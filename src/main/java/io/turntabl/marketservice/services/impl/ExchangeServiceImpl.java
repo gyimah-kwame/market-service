@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 @Transactional
 public class ExchangeServiceImpl implements ExchangeService {
 
-    @Value("${environments.test.url}")
+    @Value("${environments.prod.url}")
     private String serverUrl;
 
     @Autowired
