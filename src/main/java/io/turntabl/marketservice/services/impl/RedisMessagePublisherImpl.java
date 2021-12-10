@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -38,6 +39,7 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
     private final HashOperations<String, String, String> hashOperations;
 
     private final ProductRepository productRepository;
+    private final SimpMessagingTemplate simpMessagingTemplate;
 
 
     @Override
@@ -61,6 +63,8 @@ public class RedisMessagePublisherImpl implements MessagePublisher {
             Product product = productRepository.findByTicker(marketData.getTicker()).orElse(new Product(marketData.getTicker()));
 
             productRepository.save(product);
+
+            simpMessagingTemplate.convertAndSend("/topic/market-data", gson.toJson(marketData));
 
 
         });

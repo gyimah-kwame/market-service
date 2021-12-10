@@ -29,7 +29,7 @@ public class FetchOrders {
    private final OracleRepository oracleRepository;
 
 
-    @Scheduled(cron = "*/2 * * * * *")
+    @Scheduled(cron = "*/30 * * * * *")
     public void fetchAmazonOrders() {
         List<Amazon> data = exchangeOneOrderBook.getAmazonData()
                 .parallelStream()
@@ -49,7 +49,7 @@ public class FetchOrders {
 
     }
 
-    @Scheduled(cron = "*/2 * * * * *")
+    @Scheduled(cron = "*/30 * * * * *")
     public void fetchAppleOrders() {
 
         List<Apple> data = exchangeOneOrderBook.getAppleData()
@@ -70,7 +70,7 @@ public class FetchOrders {
 
     }
 
-    @Scheduled(cron = "*/2 * * * * *")
+    @Scheduled(cron = "*/30 * * * * *")
     public void fetchMicrosoftOrders() {
         List<Microsoft> data = exchangeOneOrderBook.getMicrosoftData()
                 .parallelStream()
@@ -89,7 +89,7 @@ public class FetchOrders {
         microsoftRepository.saveAll(data);
     }
 
-    @Scheduled(cron = "*/2 * * * * *")
+    @Scheduled(cron = "*/30 * * * * *")
     public void fetchGoogleOrders() {
         List<Google> data = exchangeOneOrderBook.getGoogleData()
                .parallelStream()
@@ -109,7 +109,7 @@ public class FetchOrders {
 
     }
 
-    @Scheduled(cron = "*/2 * * * * *")
+    @Scheduled(cron = "*/30 * * * * *")
     public void fetchTeslaOrders() {
         List<Tesla> data = exchangeOneOrderBook.getTeslaData()
                 .parallelStream()
@@ -129,7 +129,7 @@ public class FetchOrders {
 
     }
 
-    @Scheduled(cron = "*/2 * * * * *")
+    @Scheduled(cron = "*/30 * * * * *")
     public void fetchIBMOrders() {
         List<IBM> data = exchangeOneOrderBook.getIBMData()
                 .parallelStream()
@@ -149,7 +149,7 @@ public class FetchOrders {
 
     }
 
-    @Scheduled(cron = "*/2 * * * * *")
+    @Scheduled(cron = "*/30 * * * * *")
     public void fetchOracleOrders() {
         List<Oracle> data = exchangeOneOrderBook.getOracleData()
                 .parallelStream()
@@ -169,7 +169,7 @@ public class FetchOrders {
 
     }
 
-    @Scheduled(cron = "*/2 * * * * *")
+    @Scheduled(cron = "*/30 * * * * *")
     public void fetchNetflixOrders() {
         List<Netflix> data = exchangeOneOrderBook.getNetflixData()
                 .parallelStream()

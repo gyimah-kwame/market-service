@@ -3,7 +3,9 @@ package io.turntabl.marketservice;
 import com.google.gson.Gson;
 import io.turntabl.marketservice.constants.ExchangeName;
 import io.turntabl.marketservice.dtos.ExchangeDto;
+import io.turntabl.marketservice.models.Exchange;
 import io.turntabl.marketservice.repositories.ExchangeRepository;
+import io.turntabl.marketservice.services.ExchangeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -37,6 +39,9 @@ public class MarketServiceApplication  implements CommandLineRunner {
 	@Autowired
 	private Gson gson;
 
+	@Autowired
+	private ExchangeService exchangeService;
+
 	public static void main(String[] args){
 		SpringApplication.run(MarketServiceApplication.class, args);
 
@@ -64,7 +69,10 @@ public class MarketServiceApplication  implements CommandLineRunner {
 
 		List<ExchangeDto> exchanges = List.of(exchangeDto, exchangeDto2);
 
-		exchangeRepository.saveAll(exchanges.stream().map(io.turntabl.marketservice.models.Exchange::fromDto).collect(Collectors.toList()));
+		exchangeRepository.saveAll(exchanges.stream().map(Exchange::fromDto).collect(Collectors.toList()));
+
+		exchangeService.subscribeToExchange(exchangeDto.getId());
+		exchangeService.subscribeToExchange(exchangeDto2.getId());
 
 		hashOperations.put(ExchangeName.EXCHANGE_ONE.toString(), ExchangeName.EXCHANGE_ONE.toString(), gson.toJson(exchangeDto));
 		hashOperations.put(ExchangeName.EXCHANGE_TWO.toString(), ExchangeName.EXCHANGE_TWO.toString(), gson.toJson(exchangeDto2));

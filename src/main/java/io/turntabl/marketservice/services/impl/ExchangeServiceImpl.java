@@ -1,5 +1,6 @@
 package io.turntabl.marketservice.services.impl;
 
+import com.google.gson.Gson;
 import io.turntabl.marketservice.constants.ExchangeName;
 import io.turntabl.marketservice.dtos.ExchangeDto;
 import io.turntabl.marketservice.exceptions.InvalidExchangeException;
@@ -31,6 +32,11 @@ public class ExchangeServiceImpl implements ExchangeService {
     @Autowired
     private IRestService iRestService;
 
+    @Autowired
+    private HashOperations<String, String, String> hashOperations;
+
+    @Autowired
+    private Gson gson;
 
 
     @Override
@@ -60,15 +66,17 @@ public class ExchangeServiceImpl implements ExchangeService {
     }
 
     public ExchangeDto toggleSubscription(String exchangeId, boolean status) {
-        Optional<Exchange> data = exchangeRepository.findById(exchangeId);
-
-        Exchange exchange = data.orElseThrow(() -> new InvalidExchangeException(exchangeId));
+        Exchange exchange = exchangeRepository.findById(exchangeId).orElseThrow(() -> new InvalidExchangeException(exchangeId));
 
         String callback = exchange.getName().equalsIgnoreCase(ExchangeName.EXCHANGE_ONE.toString()) ? serverUrl+"/api/v1/exchanges/callback_one": serverUrl+"/api/v1/exchanges/callback_two";
 
         iRestService.toggleSubscription(exchange.getBaseUrl(), callback, status ? "POST":"DELETE");
 
         exchange.setActive(status);
+
+        String exchangeName = exchange.getName().equals(ExchangeName.EXCHANGE_ONE.toString()) ? ExchangeName.EXCHANGE_ONE.toString() : ExchangeName.EXCHANGE_TWO.toString();
+
+        hashOperations.put(exchangeName, exchangeName, gson.toJson(ExchangeDto.fromModel(exchange)));
 
         return ExchangeDto.fromModel(exchangeRepository.save(exchange));
     }
