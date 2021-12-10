@@ -1,4 +1,4 @@
-package io.turntabl.marketservice.responses;
+package io.turntabl.marketservice.models.tickers;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -11,10 +11,8 @@ import org.springframework.data.elasticsearch.annotations.FieldType;
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Document(indexName = "order_book",createIndex = true)
-public class OrderBook {
+public abstract class Ticker {
 
     @Id
     private String id;
@@ -37,7 +35,7 @@ public class OrderBook {
     @Field(type = FieldType.Text, name = "timestamp")
     private String localDateTime = LocalDateTime.now().toString();
 
-    public OrderBook(String product, String side, double price, int quantity, String exchangeURL) {
+    public Ticker(String product, String side, double price, int quantity, String exchangeURL) {
         this.product = product;
         this.side = side;
         this.price = price;
