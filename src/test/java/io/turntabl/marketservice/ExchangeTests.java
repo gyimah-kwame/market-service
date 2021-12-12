@@ -3,9 +3,9 @@ package io.turntabl.marketservice;
 import io.turntabl.marketservice.dtos.ExchangeDto;
 import io.turntabl.marketservice.models.Exchange;
 import io.turntabl.marketservice.repositories.ExchangeRepository;
-import io.turntabl.marketservice.services.ExchangeService;
+import io.turntabl.marketservice.services.CacheService;
 import io.turntabl.marketservice.services.impl.ExchangeServiceImpl;
-import io.turntabl.marketservice.rest.IRestService;
+import io.turntabl.marketservice.rest.RestService;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.redis.core.HashOperations;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,10 +28,13 @@ public class ExchangeTests {
     private ExchangeRepository exchangeRepository;
 
     @Mock
-    private IRestService iRestService;
+    private RestService restService;
 
     @Mock
-    private ExchangeService exchangeService;
+    private CacheService cacheService;
+
+    @InjectMocks
+    private ExchangeServiceImpl exchangeService;
 
 
     private final Exchange exchangeOne = new Exchange("1", "Exchange 1", "https://exchange.com", false);
@@ -41,10 +45,11 @@ public class ExchangeTests {
     private final ExchangeDto exchangeDtoTwo = new ExchangeDto("2", "Exchange 2", "https://exchange2.com", false);
 
 
+
     @Test
     public void testGetAllExchanges() {
-        Mockito.when(exchangeService.getResources()).thenReturn(new ArrayList<>(List.of(exchangeDtoOne, exchangeDtoTwo)));
-        Assertions.assertEquals(2, exchangeService.getResources().size());
+        Mockito.when(exchangeRepository.findAll()).thenReturn(new ArrayList<>(List.of(exchangeOne, exchangeTwo)));
+        Assertions.assertEquals(List.of(exchangeDtoOne, exchangeDtoTwo), exchangeService.getResources());
     }
 
 
@@ -54,8 +59,8 @@ public class ExchangeTests {
         Mockito.when(exchangeRepository.findById("1")).thenReturn(Optional.of(exchangeOne));
         Mockito.when(exchangeRepository.findById("2")).thenReturn(Optional.of(exchangeTwo));
 
-        Mockito.when(exchangeService.subscribeToExchange(exchangeOne.getId())).thenReturn(exchangeDtoOne);
-        Mockito.when(exchangeService.subscribeToExchange(exchangeTwo.getId())).thenReturn(exchangeDtoTwo);
+        Mockito.when(exchangeRepository.save(exchangeTwo)).thenReturn(exchangeTwo);
+        Mockito.when(exchangeRepository.save(exchangeOne)).thenReturn(exchangeOne);
 
         exchangeService.subscribeToExchange(exchangeOne.getId());
 
@@ -75,8 +80,8 @@ public class ExchangeTests {
         Mockito.when(exchangeRepository.findById("1")).thenReturn(Optional.of(exchangeOne));
         Mockito.when(exchangeRepository.findById("2")).thenReturn(Optional.of(exchangeTwo));
 
-        Mockito.when(exchangeService.unsubscribeToExchange(exchangeOne.getId())).thenReturn(exchangeDtoOne);
-        Mockito.when(exchangeService.unsubscribeToExchange(exchangeTwo.getId())).thenReturn(exchangeDtoTwo);
+        Mockito.when(exchangeRepository.save(exchangeTwo)).thenReturn(exchangeTwo);
+        Mockito.when(exchangeRepository.save(exchangeOne)).thenReturn(exchangeOne);
 
         exchangeService.unsubscribeToExchange(exchangeOne.getId());
 

@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 @Primary
 @Service
 @Slf4j
-public class WebClientService implements IRestService{
+public class WebClientService implements RestService {
 
     @Autowired
     @Qualifier("subscriptionClient")

@@ -6,7 +6,8 @@ import io.turntabl.marketservice.dtos.ExchangeDto;
 import io.turntabl.marketservice.exceptions.InvalidExchangeException;
 import io.turntabl.marketservice.models.Exchange;
 import io.turntabl.marketservice.repositories.ExchangeRepository;
-import io.turntabl.marketservice.rest.IRestService;
+import io.turntabl.marketservice.rest.RestService;
+import io.turntabl.marketservice.services.CacheService;
 import io.turntabl.marketservice.services.ExchangeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,7 +17,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,13 +30,13 @@ public class ExchangeServiceImpl implements ExchangeService {
     private ExchangeRepository exchangeRepository;
 
     @Autowired
-    private IRestService iRestService;
+    private RestService restService;
 
-    @Autowired
-    private HashOperations<String, String, String> hashOperations;
+   @Autowired
+   private CacheService cacheService;
 
-    @Autowired
-    private Gson gson;
+//    @Autowired
+//    private Gson gson;
 
 
     @Override
@@ -70,13 +70,13 @@ public class ExchangeServiceImpl implements ExchangeService {
 
         String callback = exchange.getName().equalsIgnoreCase(ExchangeName.EXCHANGE_ONE.toString()) ? serverUrl+"/api/v1/exchanges/callback_one": serverUrl+"/api/v1/exchanges/callback_two";
 
-        iRestService.toggleSubscription(exchange.getBaseUrl(), callback, status ? "POST":"DELETE");
+        restService.toggleSubscription(exchange.getBaseUrl(), callback, status ? "POST":"DELETE");
 
         exchange.setActive(status);
 
         String exchangeName = exchange.getName().equals(ExchangeName.EXCHANGE_ONE.toString()) ? ExchangeName.EXCHANGE_ONE.toString() : ExchangeName.EXCHANGE_TWO.toString();
 
-        hashOperations.put(exchangeName, exchangeName, gson.toJson(ExchangeDto.fromModel(exchange)));
+        cacheService.cacheData(exchangeName, ExchangeDto.fromModel(exchange));
 
         return ExchangeDto.fromModel(exchangeRepository.save(exchange));
     }

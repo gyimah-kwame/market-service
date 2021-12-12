@@ -2,7 +2,6 @@ package io.turntabl.marketservice.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -12,7 +11,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 @Slf4j
-public class RestTemplateService implements IRestService{
+public class RestTemplateService implements RestService {
 
     @Autowired
     private RestTemplate restTemplate;
