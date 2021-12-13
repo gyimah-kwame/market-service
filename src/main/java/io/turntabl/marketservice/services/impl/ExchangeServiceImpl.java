@@ -35,9 +35,6 @@ public class ExchangeServiceImpl implements ExchangeService {
    @Autowired
    private CacheService cacheService;
 
-//    @Autowired
-//    private Gson gson;
-
 
     @Override
     public List<ExchangeDto> getResources() {

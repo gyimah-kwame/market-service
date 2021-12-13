@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface GoogleRepository extends ElasticsearchRepository<Google, String> {
+
+    void deleteAllByExchangeURL(String exchangeUrl);
 }

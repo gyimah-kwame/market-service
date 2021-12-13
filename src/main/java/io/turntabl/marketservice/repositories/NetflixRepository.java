@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface NetflixRepository extends ElasticsearchRepository<Netflix, String> {
+
+    void deleteAllByExchangeURL(String exchangeUrl);
 }

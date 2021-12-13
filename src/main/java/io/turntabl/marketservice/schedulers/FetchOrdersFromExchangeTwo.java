@@ -1,6 +1,5 @@
 package io.turntabl.marketservice.schedulers;
 
-import io.turntabl.marketservice.feignclients.ExchangeOneOrderBook;
 import io.turntabl.marketservice.feignclients.ExchangeTwoOrderBook;
 import io.turntabl.marketservice.models.tickers.*;
 import io.turntabl.marketservice.repositories.*;
@@ -15,9 +14,8 @@ import java.util.stream.Collectors;
 @Component
 @Slf4j
 @AllArgsConstructor
-public class FetchOrders {
+public class FetchOrdersFromExchangeTwo {
 
-   private final ExchangeOneOrderBook exchangeOneOrderBook;
    private final ExchangeTwoOrderBook exchangeTwoOrderBook;
    private final AmazonRepository amazonRepository;
    private final GoogleRepository googleRepository;
@@ -31,7 +29,7 @@ public class FetchOrders {
 
     @Scheduled(cron = "*/30 * * * * *")
     public void fetchAmazonOrders() {
-        List<Amazon> data = exchangeOneOrderBook.getAmazonData()
+        List<Amazon> data = exchangeTwoOrderBook.getAmazonData()
                 .parallelStream()
                 .filter(item -> item.getQuantity() - item.getCumulatitiveQuantity() > 0)
                 .map(order -> new Amazon(
@@ -39,11 +37,11 @@ public class FetchOrders {
                         order.getSide(),
                         order.getPrice(),
                         order.getQuantity() - order.getCumulatitiveQuantity() ,
-                        "https://exchange.matraining.com")
+                        "https://exchange2.matraining.com")
                 )
                 .collect(Collectors.toList());
 
-        amazonRepository.deleteAll();
+        amazonRepository.deleteAllByExchangeURL("https://exchange2.matraining.com");
 
         amazonRepository.saveAll(data);
 
@@ -52,7 +50,7 @@ public class FetchOrders {
     @Scheduled(cron = "*/30 * * * * *")
     public void fetchAppleOrders() {
 
-        List<Apple> data = exchangeOneOrderBook.getAppleData()
+        List<Apple> data = exchangeTwoOrderBook.getAppleData()
                 .parallelStream()
                 .filter(item -> item.getQuantity() - item.getCumulatitiveQuantity() > 0)
                 .map(order -> new Apple(
@@ -60,11 +58,11 @@ public class FetchOrders {
                         order.getSide(),
                         order.getPrice(),
                         order.getQuantity() - order.getCumulatitiveQuantity(),
-                        "https://exchange.matraining.com")
+                        "https://exchange2.matraining.com")
                 )
                 .collect(Collectors.toList());
 
-        appleRepository.deleteAll();
+        appleRepository.deleteAllByExchangeURL("https://exchange2.matraining.com");
 
         appleRepository.saveAll(data);
 
@@ -72,7 +70,7 @@ public class FetchOrders {
 
     @Scheduled(cron = "*/30 * * * * *")
     public void fetchMicrosoftOrders() {
-        List<Microsoft> data = exchangeOneOrderBook.getMicrosoftData()
+        List<Microsoft> data = exchangeTwoOrderBook.getMicrosoftData()
                 .parallelStream()
                 .filter(item -> item.getQuantity() - item.getCumulatitiveQuantity() > 0)
                 .map(order -> new Microsoft(
@@ -80,18 +78,18 @@ public class FetchOrders {
                         order.getSide(),
                         order.getPrice(),
                         order.getQuantity() - order.getCumulatitiveQuantity(),
-                        "https://exchange.matraining.com")
+                        "https://exchange2.matraining.com")
                 )
                 .collect(Collectors.toList());
 
-        microsoftRepository.deleteAll();
+        microsoftRepository.deleteAllByExchangeURL("https://exchange2.matraining.com");
 
         microsoftRepository.saveAll(data);
     }
 
     @Scheduled(cron = "*/30 * * * * *")
     public void fetchGoogleOrders() {
-        List<Google> data = exchangeOneOrderBook.getGoogleData()
+        List<Google> data = exchangeTwoOrderBook.getGoogleData()
                .parallelStream()
                 .filter(item -> item.getQuantity() - item.getCumulatitiveQuantity() > 0)
                .map(order -> new Google(
@@ -99,11 +97,11 @@ public class FetchOrders {
                        order.getSide(),
                        order.getPrice(),
                        order.getQuantity() - order.getCumulatitiveQuantity(),
-                       "https://exchange.matraining.com")
+                       "https://exchange2.matraining.com")
                )
                .collect(Collectors.toList());
 
-        googleRepository.deleteAll();
+        googleRepository.deleteAllByExchangeURL("https://exchange2.matraining.com");
 
         googleRepository.saveAll(data);
 
@@ -111,7 +109,7 @@ public class FetchOrders {
 
     @Scheduled(cron = "*/30 * * * * *")
     public void fetchTeslaOrders() {
-        List<Tesla> data = exchangeOneOrderBook.getTeslaData()
+        List<Tesla> data = exchangeTwoOrderBook.getTeslaData()
                 .parallelStream()
                 .filter(item -> item.getQuantity() - item.getCumulatitiveQuantity() > 0)
                 .map(order -> new Tesla(
@@ -119,11 +117,11 @@ public class FetchOrders {
                         order.getSide(),
                         order.getPrice(),
                         order.getQuantity() - order.getCumulatitiveQuantity(),
-                        "https://exchange.matraining.com")
+                        "https://exchange2.matraining.com")
                 )
                 .collect(Collectors.toList());
 
-        teslaRepository.deleteAll();
+        teslaRepository.deleteAllByExchangeURL("https://exchange2.matraining.com");
 
         teslaRepository.saveAll(data);
 
@@ -131,7 +129,7 @@ public class FetchOrders {
 
     @Scheduled(cron = "*/30 * * * * *")
     public void fetchIBMOrders() {
-        List<IBM> data = exchangeOneOrderBook.getIBMData()
+        List<IBM> data = exchangeTwoOrderBook.getIBMData()
                 .parallelStream()
                 .filter(item -> item.getQuantity() - item.getCumulatitiveQuantity() > 0)
                 .map(order -> new IBM(
@@ -139,11 +137,11 @@ public class FetchOrders {
                         order.getSide(),
                         order.getPrice(),
                         order.getQuantity() - order.getCumulatitiveQuantity(),
-                        "https://exchange.matraining.com")
+                        "https://exchange2.matraining.com")
                 )
                 .collect(Collectors.toList());
 
-        ibmRepository.deleteAll();
+        ibmRepository.deleteAllByExchangeURL("https://exchange2.matraining.com");
 
         ibmRepository.saveAll(data);
 
@@ -151,7 +149,7 @@ public class FetchOrders {
 
     @Scheduled(cron = "*/30 * * * * *")
     public void fetchOracleOrders() {
-        List<Oracle> data = exchangeOneOrderBook.getOracleData()
+        List<Oracle> data = exchangeTwoOrderBook.getOracleData()
                 .parallelStream()
                 .filter(item -> item.getQuantity() - item.getCumulatitiveQuantity() > 0)
                 .map(order -> new Oracle(
@@ -159,11 +157,11 @@ public class FetchOrders {
                         order.getSide(),
                         order.getPrice(),
                         order.getQuantity() - order.getCumulatitiveQuantity(),
-                        "https://exchange.matraining.com")
+                        "https://exchange2.matraining.com")
                 )
                 .collect(Collectors.toList());
 
-        oracleRepository.deleteAll();
+        oracleRepository.deleteAllByExchangeURL("https://exchange2.matraining.com");
 
         oracleRepository.saveAll(data);
 
@@ -171,7 +169,7 @@ public class FetchOrders {
 
     @Scheduled(cron = "*/30 * * * * *")
     public void fetchNetflixOrders() {
-        List<Netflix> data = exchangeOneOrderBook.getNetflixData()
+        List<Netflix> data = exchangeTwoOrderBook.getNetflixData()
                 .parallelStream()
                 .filter(item -> item.getQuantity() - item.getCumulatitiveQuantity() > 0)
                 .map(order -> new Netflix(
@@ -179,11 +177,11 @@ public class FetchOrders {
                         order.getSide(),
                         order.getPrice(),
                         order.getQuantity() - order.getCumulatitiveQuantity(),
-                        "https://exchange.matraining.com")
+                        "https://exchange2.matraining.com")
                 )
                 .collect(Collectors.toList());
 
-        netflixRepository.deleteAll();
+        netflixRepository.deleteAllByExchangeURL("https://exchange2.matraining.com");
 
         netflixRepository.saveAll(data);
 

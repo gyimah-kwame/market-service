@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MicrosoftRepository extends ElasticsearchRepository<Microsoft, String> {
+
+    void deleteAllByExchangeURL(String exchangeUrl);
 }

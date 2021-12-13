@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface AppleRepository extends ElasticsearchRepository<Apple, String> {
+
+    void deleteAllByExchangeURL(String exchangeUrl);
 }

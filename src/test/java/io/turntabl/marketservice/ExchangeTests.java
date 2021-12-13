@@ -37,12 +37,12 @@ public class ExchangeTests {
     private ExchangeServiceImpl exchangeService;
 
 
-    private final Exchange exchangeOne = new Exchange("1", "Exchange 1", "https://exchange.com", false);
-    private final Exchange exchangeTwo = new Exchange("2", "Exchange 2", "https://exchange2.com", false);
+    private final Exchange exchangeOne = new Exchange("1", "Exchange 1", "https://exchange.matraining.com/", false);
+    private final Exchange exchangeTwo = new Exchange("2", "Exchange 2", "https://exchange2.matraining.com/", false);
 
 
-    private final ExchangeDto exchangeDtoOne = new ExchangeDto("1", "Exchange 1", "https://exchange.com", false);
-    private final ExchangeDto exchangeDtoTwo = new ExchangeDto("2", "Exchange 2", "https://exchange2.com", false);
+    private final ExchangeDto exchangeDtoOne = new ExchangeDto("1", "Exchange 1", "https://exchange.matraining.com/", false);
+    private final ExchangeDto exchangeDtoTwo = new ExchangeDto("2", "Exchange 2", "https://exchange2.matraining.com/", false);
 
 
 
